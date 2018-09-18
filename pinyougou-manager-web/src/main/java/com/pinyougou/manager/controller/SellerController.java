@@ -1,6 +1,7 @@
 package com.pinyougou.manager.controller;
 import java.util.List;
 
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -48,6 +49,10 @@ public class SellerController {
 	 */
 	@RequestMapping("/add")
 	public Result add(@RequestBody TbSeller seller){
+		//密码加密
+		BCryptPasswordEncoder bpe = new BCryptPasswordEncoder();
+		String password = bpe.encode(seller.getPassword());
+		seller.setPassword(password);
 		try {
 			sellerService.add(seller);
 			return new Result(true, "增加成功");
@@ -109,6 +114,18 @@ public class SellerController {
 	@RequestMapping("/search")
 	public PageResult search(@RequestBody TbSeller seller, int page, int rows  ){
 		return sellerService.findPage(seller, page, rows);		
+	}
+	@RequestMapping("/updateStatus")
+	public Result updateStatus(String sellerId,String status){
+		try {
+			sellerService.updateStatus(sellerId,status);
+			System.out.println("成功");
+			return new Result(true,"修改成功");
+		} catch (Exception e) {
+			e.printStackTrace();
+			System.out.println("失败");
+			return new Result(false,"修改失败");
+		}
 	}
 	
 }

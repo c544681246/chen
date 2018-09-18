@@ -109,5 +109,4 @@ public class TypeTemplateServiceImpl implements TypeTemplateService {
 	}
 
 
-
 }
