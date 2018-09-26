@@ -6,20 +6,20 @@ angular.module('pagination', []).directive('tmPagination',[function(){
     return {
         restrict: 'EA',
         template: '<div class="page-list">' +
-            '<ul class="pagination" ng-show="conf.totalItems > 0">' +
-            '<li ng-class="{disabled: conf.currentPage == 1}" ng-click="prevPage()"><span>&laquo;</span></li>' +
-            '<li ng-repeat="item in pageList track by $index" ng-class="{active: item == conf.currentPage, separate: item == \'...\'}" ' +
+            '<ul class="pagination" ng-show="properties.totalItems > 0">' +
+            '<li ng-class="{disabled: properties.currentPage == 1}" ng-click="prevPage()"><span>&laquo;</span></li>' +
+            '<li ng-repeat="item in pageList track by $index" ng-class="{active: item == properties.currentPage, separate: item == \'...\'}" ' +
             'ng-click="changeCurrentPage(item)">' +
             '<span>{{ item }}</span>' +
             '</li>' +
-            '<li ng-class="{disabled: conf.currentPage == conf.numberOfPages}" ng-click="nextPage()"><span>&raquo;</span></li>' +
+            '<li ng-class="{disabled: properties.currentPage == conf.numberOfPages}" ng-click="nextPage()"><span>&raquo;</span></li>' +
             '</ul>' +
-            '<div class="page-total" ng-show="conf.totalItems > 0">' +
+            '<div class="page-total" ng-show="properties.totalItems > 0">' +
             '第<input type="text" ng-model="jumpPageNum"  ng-keyup="jumpToPage($event)"/>页 ' +
-            '每页<select ng-model="conf.itemsPerPage" ng-options="option for option in conf.perPageOptions "></select>' +
-            '/共<strong>{{ conf.totalItems }}</strong>条' +
+            '每页<select ng-model="properties.itemsPerPage" ng-options="option for option in properties.perPageOptions "></select>' +
+            '/共<strong>{{ properties.totalItems }}</strong>条' +
             '</div>' +
-            '<div class="no-items" ng-show="conf.totalItems <= 0">暂无数据</div>' +
+            '<div class="no-items" ng-show="properties.totalItems <= 0">暂无数据</div>' +
             '</div>',
         replace: true,
         scope: {
@@ -43,7 +43,7 @@ angular.module('pagination', []).directive('tmPagination',[function(){
                 scope.conf.pagesLength = scope.conf.pagesLength -1;
             }
 
-            // conf.erPageOptions
+            // properties.erPageOptions
             if(!scope.conf.perPageOptions){
                 scope.conf.perPageOptions = [10, 15, 20, 30, 50];
             }
@@ -52,15 +52,15 @@ angular.module('pagination', []).directive('tmPagination',[function(){
             function getPagination(newValue, oldValue) {
                 
 
-                // conf.currentPage
+                // properties.currentPage
                 scope.conf.currentPage = parseInt(scope.conf.currentPage) ? parseInt(scope.conf.currentPage) : 1;
                 
 
 
-                // conf.totalItems
+                // properties.totalItems
                 scope.conf.totalItems = parseInt(scope.conf.totalItems) ? parseInt(scope.conf.totalItems) : 0;
 
-                // conf.itemsPerPage (default:15)
+                // properties.itemsPerPage (default:15)
                 scope.conf.itemsPerPage = parseInt(scope.conf.itemsPerPage) ? parseInt(scope.conf.itemsPerPage) : 15;
                 
 

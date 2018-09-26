@@ -13,6 +13,7 @@ import com.pinyougou.pojo.TbBrandExample.Criteria;
 import com.pinyougou.sellergoods.service.BrandService;
 
 import entity.PageResult;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * 服务实现层
@@ -20,6 +21,7 @@ import entity.PageResult;
  *
  */
 @Service
+@Transactional
 public class BrandServiceImpl implements BrandService {
 
 	@Autowired

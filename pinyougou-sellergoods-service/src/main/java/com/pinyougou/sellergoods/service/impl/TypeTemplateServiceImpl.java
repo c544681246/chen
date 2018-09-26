@@ -2,6 +2,10 @@ package com.pinyougou.sellergoods.service.impl;
 import java.util.List;
 import java.util.Map;
 
+import com.alibaba.fastjson.JSON;
+import com.pinyougou.mapper.TbSpecificationOptionMapper;
+import com.pinyougou.pojo.TbSpecificationOption;
+import com.pinyougou.pojo.TbSpecificationOptionExample;
 import org.springframework.beans.factory.annotation.Autowired;
 import com.alibaba.dubbo.config.annotation.Service;
 import com.github.pagehelper.Page;
@@ -13,6 +17,8 @@ import com.pinyougou.pojo.TbTypeTemplateExample.Criteria;
 import com.pinyougou.sellergoods.service.TypeTemplateService;
 
 import entity.PageResult;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * 服务实现层
@@ -20,11 +26,14 @@ import entity.PageResult;
  *
  */
 @Service
+@Transactional
 public class TypeTemplateServiceImpl implements TypeTemplateService {
 
 	@Autowired
 	private TbTypeTemplateMapper typeTemplateMapper;
-	
+
+	@Autowired
+	private TbSpecificationOptionMapper specificationOptionMapper;
 	/**
 	 * 查询全部
 	 */
@@ -104,9 +113,39 @@ public class TypeTemplateServiceImpl implements TypeTemplateService {
 	
 		}
 		
-		Page<TbTypeTemplate> page= (Page<TbTypeTemplate>)typeTemplateMapper.selectByExample(example);		
+		Page<TbTypeTemplate> page= (Page<TbTypeTemplate>)typeTemplateMapper.selectByExample(example);
+		saveToRedis();
 		return new PageResult(page.getTotal(), page.getResult());
 	}
+	//根据id查询
+	@Override
+	public List<Map> findSpecIds(Long id) {
+		//根据id查询模板表
+		TbTypeTemplate tbTypeTemplate = typeTemplateMapper.selectByPrimaryKey(id);
+		//将[{"id":27,"text":"网络"},{"id":32,"text":"机身内存"}]转换成json
+		List<Map> list = JSON.parseArray(tbTypeTemplate.getSpecIds(), Map.class);
+		//遍历list集合
+		for (Map map : list) {
+			TbSpecificationOptionExample example=new TbSpecificationOptionExample();
+			TbSpecificationOptionExample.Criteria criteria = example.createCriteria();
+			//根据specId.id查询specoption表
+			criteria.andSpecIdEqualTo(new Long((Integer)map.get("id")));
+			List<TbSpecificationOption> options = specificationOptionMapper.selectByExample(example);
+			map.put("options",options);
+		}
+		return list;
+	}
+	@Autowired
+	private RedisTemplate redisTemplate;
 
+	private void saveToRedis(){
+		List<TbTypeTemplate> typeTemplatesList = findAll();
+		for (TbTypeTemplate typeTemplate : typeTemplatesList) {
+			List<Map> brandList = JSON.parseArray(typeTemplate.getBrandIds(), Map.class);
+			redisTemplate.boundHashOps("brandList").put(typeTemplate.getId(),brandList);
+			List<Map> specList = findSpecIds(typeTemplate.getId());
+			redisTemplate.boundHashOps("specList").put(typeTemplate.getId(),specList);
 
+		}
+	}
 }

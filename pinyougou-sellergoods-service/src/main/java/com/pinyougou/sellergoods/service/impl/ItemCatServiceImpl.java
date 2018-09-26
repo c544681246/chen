@@ -11,6 +11,8 @@ import com.pinyougou.pojo.TbItemCatExample.Criteria;
 import com.pinyougou.sellergoods.service.ItemCatService;
 
 import entity.PageResult;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * 服务实现层
@@ -18,6 +20,7 @@ import entity.PageResult;
  *
  */
 @Service
+@Transactional
 public class ItemCatServiceImpl implements ItemCatService {
 
 	@Autowired
@@ -77,9 +80,9 @@ public class ItemCatServiceImpl implements ItemCatService {
 			itemCatMapper.deleteByPrimaryKey(id);
 		}		
 	}
-	
-	
-		@Override
+	@Autowired
+	private RedisTemplate redisTemplate;
+	@Override
 	public PageResult findPage(TbItemCat itemCat, int pageNum, int pageSize) {
 		PageHelper.startPage(pageNum, pageSize);
 		
@@ -93,7 +96,7 @@ public class ItemCatServiceImpl implements ItemCatService {
 	
 		}
 		
-		Page<TbItemCat> page= (Page<TbItemCat>)itemCatMapper.selectByExample(example);		
+		Page<TbItemCat> page= (Page<TbItemCat>)itemCatMapper.selectByExample(example);
 		return new PageResult(page.getTotal(), page.getResult());
 	}
 
@@ -102,6 +105,13 @@ public class ItemCatServiceImpl implements ItemCatService {
 		TbItemCatExample example=new TbItemCatExample();
 		Criteria criteria = example.createCriteria();
 		criteria.andParentIdEqualTo(parentId);
+		//将商品分类放入缓存
+		List<TbItemCat> list = findAll();
+		for (TbItemCat itemCat : list) {
+			redisTemplate.boundHashOps("itemCat").put(itemCat.getName(),itemCat.getTypeId());
+
+		}
+		System.out.println("将模板ID放入缓存");
 		return itemCatMapper.selectByExample(example);
 	}
 	

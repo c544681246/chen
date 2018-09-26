@@ -12,6 +12,7 @@ import com.pinyougou.pojo.TbSellerExample.Criteria;
 import com.pinyougou.sellergoods.service.SellerService;
 
 import entity.PageResult;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * 服务实现层
@@ -19,6 +20,7 @@ import entity.PageResult;
  *
  */
 @Service
+@Transactional
 public class SellerServiceImpl implements SellerService {
 
 	@Autowired
@@ -91,7 +93,8 @@ public class SellerServiceImpl implements SellerService {
 		
 		if(seller!=null){			
 						if(seller.getSellerId()!=null && seller.getSellerId().length()>0){
-				criteria.andSellerIdLike("%"+seller.getSellerId()+"%");
+			  //criteria.andSellerIdLike("%"+seller.getSellerId()+"%");
+				criteria.andSellerIdEqualTo(seller.getSellerId());
 			}
 			if(seller.getName()!=null && seller.getName().length()>0){
 				criteria.andNameLike("%"+seller.getName()+"%");

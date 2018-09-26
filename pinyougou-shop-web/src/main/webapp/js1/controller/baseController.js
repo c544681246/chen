@@ -42,5 +42,13 @@ app.controller("baseController",function ($scope) {
        }
         return v;
     }
-
+    //查询该集合中对象是否包含某key
+    $scope.searchObjectByKey=function(list,key,keyValue){
+        for(var i=0;i<list.length;i++){
+            if(list[i][key]==keyValue){
+                return list[i];
+            }
+        }
+        return null;
+    }
 });
