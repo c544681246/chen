@@ -1,7 +1,11 @@
 package com.pinyougou.manager.controller;
+import java.util.Arrays;
 import java.util.List;
 
+import com.pinyougou.page.service.ItemPageService;
+import com.pinyougou.pojo.TbItem;
 import com.pinyougou.pojogroup.Goods;
+import com.pinyougou.search.service.ItemSearchService;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -57,7 +61,8 @@ public class GoodsController {
 			return new Result(false, "增加失败");
 		}
 	}
-	
+	@Reference
+	private ItemSearchService itemSearchService;
 	/**
 	 * 修改
 	 * @param goods
@@ -93,6 +98,7 @@ public class GoodsController {
 	public Result delete(Long [] ids){
 		try {
 			goodsService.delete(ids);
+			itemSearchService.deleteByGoodsIds(Arrays.asList(ids));
 			return new Result(true, "删除成功"); 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -115,10 +121,27 @@ public class GoodsController {
 	public Result updateStatus(Long[] ids,String status){
 		try {
 			goodsService.updateStatus(ids,status);
+			if(status.equals("1")){
+				List<TbItem> itemList = goodsService.findItemListByGoodsIdandStatus(ids, status);
+				if(itemList.size()>0){
+					itemSearchService.importList(itemList);
+				}else {
+					System.out.println("没有明细数据	");
+				}
+			}
 			return new Result(true, "修改成功");
 		} catch (Exception e) {
 			e.printStackTrace();
 			return new Result(false, "修改失败");
 		}
 	}
+
+	@Reference(timeout = 40000)
+	private ItemPageService itemPageService;
+	//生成静态页面
+	@RequestMapping("/genHtml")
+	public boolean genHtml(Long goodsId){
+		return itemPageService.genItemHtml(goodsId);
+	}
+
 }
