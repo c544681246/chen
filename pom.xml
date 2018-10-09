@@ -291,5 +291,17 @@
         <module>pinyougou-portal-web</module>
         <module>pinyougou-page-interface</module>
         <module>pinyougou-page-service</module>
-    </modules>
+        <module>pinyougou-page-web</module>
+		<module>pinyougou-page-web</module>
+		<module>pinyougou-page-web</module>
+		<module>pinyougou-page-web</module>
+        <module>pinyougou-page-web</module>
+        <module>pinyougou-page-web</module>
+		<module>pinyougou-page-web</module>
+        <module>pinyougou-page-web</module>
+        <module>pinyougou-page-web</module>
+        <module>pinyougou-page-web</module>
+		<module>pinyougou-page-web</module>
+		<module>pinyougou-page-web</module>
+	</modules>
 </project>
