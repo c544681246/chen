@@ -4,9 +4,10 @@ import java.util.List;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
 import com.alibaba.dubbo.config.annotation.Reference;
-import com.pinyougou.pojo.TbContentCategory;
 import com.pinyougou.content.service.ContentCategoryService;
+import com.pinyougou.pojo.TbContentCategory;
 
 import entity.PageResult;
 import entity.Result;
@@ -101,7 +102,7 @@ public class ContentCategoryController {
 	
 		/**
 	 * 查询+分页
-	 * @param brand
+	 * @param
 	 * @param page
 	 * @param rows
 	 * @return

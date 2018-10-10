@@ -26,6 +26,7 @@
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
+      <module name="jmsDemo" target="1.5" />
       <module name="pinyougou-common" target="1.7" />
       <module name="pinyougou-content-interface" target="1.7" />
       <module name="pinyougou-content-service" target="1.7" />
@@ -45,6 +46,8 @@
       <module name="pinyougou-shop-web" target="1.7" />
       <module name="pinyougou-solr-util" target="1.7" />
       <module name="pinyougoupageweb" target="1.7" />
+      <module name="springjms_consumer" target="1.5" />
+      <module name="springjms_producer" target="1.5" />
     </bytecodeTargetLevel>
   </component>
 </project>

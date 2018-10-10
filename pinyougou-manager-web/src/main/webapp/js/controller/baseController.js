@@ -1,46 +1,51 @@
-app.controller("baseController",function ($scope) {
-
-    $scope.reloadList=function () {
-        $scope.search($scope.paginationConf.currentPage,$scope.paginationConf.itemsPerPage)
-    };;
-
-
-    //分页控件配置
-    $scope.paginationConf = {
-        currentPage: 1,//当前页
-        totalItems: 10,//总记录数  items:条数
-        itemsPerPage: 10,//每页记录数
-        perPageOptions: [10, 20, 30, 40, 50],//选择每页显示的页数
-        onChange: function(){		//当页码变更后自动触发的方法
-            $scope.reloadList();//页码变更或者页面初始化调用此方法
-        }
-    };
-
-    //用户勾选的id集合
-    $scope.selectIds=[];
-
-    $scope.updateSelection=function ($event,id) {
-        if($event.target.checked){
-            //push向集合添加元素
-            $scope.selectIds.push(id);
-        }else{
-            var index= $scope.selectIds.indexOf(id);//查找值的 位置
-            $scope.selectIds.splice(index,1);//参数1：移除的位置 参数2：移除的个数
-        }
-    };
-
-    $scope.jsonToString=function (Json,key) {
-
-       var json= JSON.parse(Json);
-       var v='';
-       for(var i=0;i<json.length;i++){
-           if(i>0){
-               v+=",";
-           }
-           v+=json[i][key]
-
-       }
-        return v;
-    }
-
+app.controller("baseController",function($scope){
+	// 分页的配置的信息
+	$scope.paginationConf = {
+		 currentPage: 1, // 当前页数
+		 totalItems: 10, // 总记录数
+		 itemsPerPage: 10, // 每页显示多少条记录
+		 perPageOptions: [10, 20, 30, 40, 50],// 显示多少条下拉列表
+		 onChange: function(){ // 当页码、每页显示多少条下拉列表发生变化的时候，自动触发了
+			$scope.reloadList();// 重新加载列表
+		 }
+	}; 
+	
+	$scope.reloadList = function(){
+		// $scope.findByPage($scope.paginationConf.currentPage,$scope.paginationConf.itemsPerPage);
+		$scope.search($scope.paginationConf.currentPage,$scope.paginationConf.itemsPerPage);
+	}
+	
+	// 定义一个数组:
+	$scope.selectIds = [];
+	// 更新复选框：
+	$scope.updateSelection = function($event,id){
+		// 复选框选中
+		if($event.target.checked){
+			// 向数组中添加元素
+			$scope.selectIds.push(id);
+		}else{
+			// 从数组中移除
+			var idx = $scope.selectIds.indexOf(id);
+			$scope.selectIds.splice(idx,1);
+		}
+		
+	}
+	
+	// 定义方法：获取JSON字符串中的某个key对应值的集合
+	$scope.jsonToString = function(jsonStr,key){
+		// 将字符串转成JSOn:
+		var jsonObj = JSON.parse(jsonStr);
+		
+		var value = "";
+		for(var i=0;i<jsonObj.length;i++){
+			
+			if(i>0){
+				value += ",";
+			}
+			
+			value += jsonObj[i][key];
+		}
+		return value;
+	}
+	
 });

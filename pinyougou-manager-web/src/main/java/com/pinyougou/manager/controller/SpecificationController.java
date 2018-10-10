@@ -6,6 +6,7 @@ import com.pinyougou.pojogroup.Specification;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
 import com.alibaba.dubbo.config.annotation.Reference;
 import com.pinyougou.pojo.TbSpecification;
 import com.pinyougou.sellergoods.service.SpecificationService;
@@ -43,7 +44,22 @@ public class SpecificationController {
 		return specificationService.findPage(page, rows);
 	}
 	
-
+	/**
+	 * 增加
+	 * @param specification
+	 * @return
+	 */
+	@RequestMapping("/add")
+	public Result add(@RequestBody Specification specification){
+		try {
+			specificationService.add(specification);
+			return new Result(true, "增加成功");
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new Result(false, "增加失败");
+		}
+	}
+	
 	/**
 	 * 修改
 	 * @param specification
@@ -67,11 +83,8 @@ public class SpecificationController {
 	 */
 	@RequestMapping("/findOne")
 	public Specification findOne(Long id){
-		return specificationService.findOne(id);
-
+		return specificationService.findOne(id);		
 	}
-
-
 	
 	/**
 	 * 批量删除
@@ -89,32 +102,20 @@ public class SpecificationController {
 		}
 	}
 	
-	/*
-	* 查询+分页
-	* */
+		/**
+	 * 查询+分页
+	 * @param
+	 * @param page
+	 * @param rows
+	 * @return
+	 */
 	@RequestMapping("/search")
 	public PageResult search(@RequestBody TbSpecification specification, int page, int rows  ){
 		return specificationService.findPage(specification, page, rows);		
 	}
-	/**
-	 * 增加
-	 * @param specification
-	 * @return
-	 */
-    @RequestMapping("/add")
-	public Result add(@RequestBody Specification specification){
-		try {
-			specificationService.add(specification);
-			return new Result(true, "保存成功");
-		} catch (Exception e) {
-			e.printStackTrace();
-			return new Result(false, "保存失败");
-		}
-	}
-
-	@RequestMapping("/selectOptionList1")
+	
+	@RequestMapping("/selectOptionList")
 	public List<Map> selectOptionList(){
 		return specificationService.selectOptionList();
 	}
-	
 }

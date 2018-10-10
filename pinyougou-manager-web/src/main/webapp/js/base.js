@@ -1,1 +1,2 @@
-var app=angular.module('pinyougou',[]);  // 不含分页
+// 定义模块:
+var app = angular.module("pinyougou",[]);

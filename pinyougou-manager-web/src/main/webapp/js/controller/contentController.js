@@ -1,5 +1,5 @@
  //控制层 
-app.controller('contentController' ,function($scope,$controller,uploadService,contentService,contentCategoryService){
+app.controller('contentController' ,function($scope,$controller ,uploadService,contentCategoryService  ,contentService){	
 	
 	$controller('baseController',{$scope:$scope});//继承
 	
@@ -41,7 +41,7 @@ app.controller('contentController' ,function($scope,$controller,uploadService,co
 		}				
 		serviceObject.success(
 			function(response){
-				if(response.success){
+				if(response.flag){
 					//重新查询 
 		        	$scope.reloadList();//重新加载
 				}else{
@@ -57,9 +57,9 @@ app.controller('contentController' ,function($scope,$controller,uploadService,co
 		//获取选中的复选框			
 		contentService.dele( $scope.selectIds ).success(
 			function(response){
-				if(response.success){
+				if(response.flag){
 					$scope.reloadList();//刷新列表
-					$scope.selectIds=[];
+					$scope.selectIds = [];
 				}						
 			}		
 		);				
@@ -71,34 +71,29 @@ app.controller('contentController' ,function($scope,$controller,uploadService,co
 	$scope.search=function(page,rows){			
 		contentService.search(page,rows,$scope.searchEntity).success(
 			function(response){
-				$scope.list=response.rows;	
+				$scope.list=response.rows;
 				$scope.paginationConf.totalItems=response.total;//更新总记录数
 			}			
 		);
 	}
-	$scope.upload=function () {
-		uploadService.uploadFile().success(
-			function (response) {
-				if(response.success){
-					$scope.entity.pic=response.message;
-				}else {
-					alert("上传失败")
-				}
-            }
-		).error(
-			function () {
-				alert("上传错误")
-            }
-		)
-    }
-    $scope.status=['无效','有效'];
-
-    $scope.findcontentCategoryList=function () {
-		contentCategoryService.findAll().success(
-			function (response) {
-				$scope.contentCategoryList=response;
-            }
-		)
-    }
     
+	// 文件上传的方法:
+	$scope.uploadFile = function(){
+		uploadService.uploadFile().success(function(response){
+			if(response.flag){
+				$scope.entity.pic = response.message;
+			}else{
+				alert(response.message);
+			}
+		});
+	}
+	
+	// 查询所有广告分类
+	$scope.findContentCategoryList = function(){
+		contentCategoryService.findAll().success(function(response){
+			$scope.contentCategoryList = response;
+		});
+	}
+	
+	$scope.status = ["无效","有效"];
 });	

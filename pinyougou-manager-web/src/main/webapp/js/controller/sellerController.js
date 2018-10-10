@@ -1,5 +1,5 @@
  //控制层 
-app.controller('sellerController' ,function($scope,$controller,sellerService){
+app.controller('sellerController' ,function($scope,$controller   ,sellerService){	
 	
 	$controller('baseController',{$scope:$scope});//继承
 	
@@ -10,7 +10,7 @@ app.controller('sellerController' ,function($scope,$controller,sellerService){
 				$scope.list=response;
 			}			
 		);
-	};
+	}    
 	
 	//分页
 	$scope.findPage=function(page,rows){			
@@ -41,7 +41,7 @@ app.controller('sellerController' ,function($scope,$controller,sellerService){
 		}				
 		serviceObject.success(
 			function(response){
-				if(response.success){
+				if(response.flag){
 					//重新查询 
 		        	$scope.reloadList();//重新加载
 				}else{
@@ -57,9 +57,9 @@ app.controller('sellerController' ,function($scope,$controller,sellerService){
 		//获取选中的复选框			
 		sellerService.dele( $scope.selectIds ).success(
 			function(response){
-				if(response.success){
+				if(response.flag){
 					$scope.reloadList();//刷新列表
-					$scope.selectIds=[];
+					$scope.selectIds = [];
 				}						
 			}		
 		);				
@@ -68,7 +68,7 @@ app.controller('sellerController' ,function($scope,$controller,sellerService){
 	$scope.searchEntity={};//定义搜索对象 
 	
 	//搜索
-	$scope.search=function(page,rows){
+	$scope.search=function(page,rows){			
 		sellerService.search(page,rows,$scope.searchEntity).success(
 			function(response){
 				$scope.list=response.rows;	
@@ -76,18 +76,15 @@ app.controller('sellerController' ,function($scope,$controller,sellerService){
 			}			
 		);
 	}
-
-    $scope.updateStatus=function(sellerId,status){
-        sellerService.updateStatus(sellerId,status).success(
-            function(response){
-                if(response.success){
-                	alert("成功")
-                    $scope.reloadList();//刷新列表
-                }else{
-                    alert("失败");
-                }
-            }
-        );
-    }
-
+    
+	$scope.updateStatus = function(sellerId,status){
+		sellerService.updateStatus(sellerId,status).success(function(response){
+			if(response.flag){
+				//重新查询 
+	        	$scope.reloadList();//重新加载
+			}else{
+				alert(response.message);
+			}
+		});
+	}
 });	

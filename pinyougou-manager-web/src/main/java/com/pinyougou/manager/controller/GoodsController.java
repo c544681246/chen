@@ -2,15 +2,24 @@ package com.pinyougou.manager.controller;
 import java.util.Arrays;
 import java.util.List;
 
-import com.pinyougou.page.service.ItemPageService;
-import com.pinyougou.pojo.TbItem;
+import javax.jms.Destination;
+import javax.jms.JMSException;
+import javax.jms.Message;
+import javax.jms.Session;
+
 import com.pinyougou.pojogroup.Goods;
-import com.pinyougou.search.service.ItemSearchService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jms.core.JmsTemplate;
+import org.springframework.jms.core.MessageCreator;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
 import com.alibaba.dubbo.config.annotation.Reference;
+import com.alibaba.fastjson.JSON;
+
 import com.pinyougou.pojo.TbGoods;
+import com.pinyougou.pojo.TbItem;
 import com.pinyougou.sellergoods.service.GoodsService;
 
 import entity.PageResult;
@@ -61,8 +70,7 @@ public class GoodsController {
 			return new Result(false, "增加失败");
 		}
 	}
-	@Reference
-	private ItemSearchService itemSearchService;
+	
 	/**
 	 * 修改
 	 * @param goods
@@ -89,16 +97,41 @@ public class GoodsController {
 		return goodsService.findOne(id);		
 	}
 	
+	@Autowired
+	private Destination queueSolrDeleteDestination;
+	
+	@Autowired
+	private Destination topicPageDeleteDestination;
+	
 	/**
 	 * 批量删除
 	 * @param ids
 	 * @return
 	 */
 	@RequestMapping("/delete")
-	public Result delete(Long [] ids){
+	public Result delete(final Long [] ids){
 		try {
 			goodsService.delete(ids);
-			itemSearchService.deleteByGoodsIds(Arrays.asList(ids));
+			
+			//从索引库中删除
+			//itemSearchService.deleteByGoodsIds(Arrays.asList(ids));
+			jmsTemplate.send(queueSolrDeleteDestination, new MessageCreator() {
+				
+				@Override
+				public Message createMessage(Session session) throws JMSException {
+					return session.createObjectMessage(ids);
+				}
+			});
+			
+			//删除每个服务器上的商品详细页
+			jmsTemplate.send(topicPageDeleteDestination, new MessageCreator() {
+				
+				@Override
+				public Message createMessage(Session session) throws JMSException {
+					return session.createObjectMessage(ids);
+				}
+			});
+			
 			return new Result(true, "删除成功"); 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -106,7 +139,7 @@ public class GoodsController {
 		}
 	}
 	
-		/**
+	/**
 	 * 查询+分页
 	 * @param
 	 * @param page
@@ -117,35 +150,70 @@ public class GoodsController {
 	public PageResult search(@RequestBody TbGoods goods, int page, int rows  ){
 		return goodsService.findPage(goods, page, rows);		
 	}
+	
+	//@Reference(timeout=100000)
+	//private ItemSearchService itemSearchService;
+	
+	@Autowired
+	private JmsTemplate jmsTemplate;
+	
+	@Autowired
+	private Destination queueSolrDestination;//用于导入solr索引库的消息目标（点对点）
+	
+	@Autowired
+	private Destination topicPageDestination;//用于生成商品详细页的消息目标(发布订阅)
+	
 	@RequestMapping("/updateStatus")
 	public Result updateStatus(Long[] ids,String status){
 		try {
-			goodsService.updateStatus(ids,status);
-			if(status.equals("1")){
+			goodsService.updateStatus(ids, status);
+			
+			if("1".equals(status)){//如果是审核通过 
+				//*****导入到索引库
+				//得到需要导入的SKU列表
 				List<TbItem> itemList = goodsService.findItemListByGoodsIdandStatus(ids, status);
-				if(itemList.size()>0){
-					itemSearchService.importList(itemList);
-				}else {
-					System.out.println("没有明细数据	");
+				//导入到solr
+				//itemSearchService.importList(itemList);	
+				final String jsonString = JSON.toJSONString(itemList);//转换为json传输
+				
+				jmsTemplate.send(queueSolrDestination, new MessageCreator() {
+					
+					@Override
+					public Message createMessage(Session session) throws JMSException {
+						
+						return session.createTextMessage(jsonString);
+					}
+				});
+				
+				//****生成商品详细页
+				for(final Long goodsId:ids){
+					//	itemPageService.genItemHtml(goodsId);
+					jmsTemplate.send(topicPageDestination, new MessageCreator() {
+						
+						@Override
+						public Message createMessage(Session session) throws JMSException {							
+							return session.createTextMessage(goodsId+"");
+						}
+					});					
 				}
-				//静态页生成
-				for(Long goodsId:ids){
-					itemPageService.genItemHtml(goodsId);
-				}
-			}
-			return new Result(true, "修改成功");
+				
+			}		
+			
+			return new Result(true, "修改状态成功"); 
 		} catch (Exception e) {
 			e.printStackTrace();
-			return new Result(false, "修改失败");
+			return new Result(false, "修改状态失败");
 		}
 	}
-
-	@Reference(timeout = 40000)
-	private ItemPageService itemPageService;
-	//生成静态页面
+	
+	//@Reference(timeout=40000)
+	//private ItemPageService itemPageService;
+	
 	@RequestMapping("/genHtml")
-	public boolean genHtml(Long goodsId){
-		return itemPageService.genItemHtml(goodsId);
+	public void genHtml(Long goodsId){
+		
+		//itemPageService.genItemHtml(goodsId);
+		
 	}
-
+	
 }

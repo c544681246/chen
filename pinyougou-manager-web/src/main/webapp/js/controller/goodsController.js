@@ -1,5 +1,5 @@
  //控制层 
-app.controller('goodsController' ,function($scope,$controller,goodsService,itemCatService){
+app.controller('goodsController' ,function($scope,$controller,itemCatService   ,goodsService){	
 	
 	$controller('baseController',{$scope:$scope});//继承
 	
@@ -23,8 +23,7 @@ app.controller('goodsController' ,function($scope,$controller,goodsService,itemC
 	}
 	
 	//查询实体 
-	$scope.findOne=function(id){
-
+	$scope.findOne=function(id){				
 		goodsService.findOne(id).success(
 			function(response){
 				$scope.entity= response;					
@@ -42,7 +41,7 @@ app.controller('goodsController' ,function($scope,$controller,goodsService,itemC
 		}				
 		serviceObject.success(
 			function(response){
-				if(response.success){
+				if(response.flag){
 					//重新查询 
 		        	$scope.reloadList();//重新加载
 				}else{
@@ -58,9 +57,9 @@ app.controller('goodsController' ,function($scope,$controller,goodsService,itemC
 		//获取选中的复选框			
 		goodsService.dele( $scope.selectIds ).success(
 			function(response){
-				if(response.success){
+				if(response.flag){
 					$scope.reloadList();//刷新列表
-					$scope.selectIds=[];
+					$scope.selectIds = [];
 				}						
 			}		
 		);				
@@ -77,29 +76,30 @@ app.controller('goodsController' ,function($scope,$controller,goodsService,itemC
 			}			
 		);
 	}
-	$scope.status=['未审核','已审核','审核未通过','关闭'];
-	$scope.itemCatList=[];
-	$scope.findItemCatList=function () {
-		itemCatService.findAll().success(
-			function (response) {
-				for(var i=0;i<response.length;i++){
-					$scope.itemCatList[response[i].id]=response[i].name;
-				}
-            }
-		);
-    }
-
-    //更改状态
-    $scope.updateStatus=function(status){
-        goodsService.updateStatus($scope.selectIds,status).success(
-            function(response){
-                if(response.success){//成功
-                    $scope.reloadList();//刷新列表
-                    $scope.selectIds=[];//清空 ID 集合
-                }else{
-                    alert(response.message);
-                }
-            }
-        );
-    }
+    
+	// 显示状态
+	$scope.status = ["未审核","审核通过","审核未通过","关闭"];
+	
+	$scope.itemCatList = [];
+	// 显示分类:
+	$scope.findItemCatList = function(){
+		
+		itemCatService.findAll().success(function(response){
+			for(var i=0;i<response.length;i++){
+				$scope.itemCatList[response[i].id] = response[i].name;
+			}
+		});
+	}
+	
+	// 审核的方法:
+	$scope.updateStatus = function(status){
+		goodsService.updateStatus($scope.selectIds,status).success(function(response){
+			if(response.flag){
+				$scope.reloadList();//刷新列表
+				$scope.selectIds = [];
+			}else{
+				alert(response.message);
+			}
+		});
+	}
 });	
