@@ -1,0 +1,22 @@
+<component name="libraryTable">
+  <library name="lib1">
+    <CLASSES>
+      <root url="jar://D:/pinyougou_ziyuan/dysmsapi_demo_sdk__java/java/msg_demo/alicom-mns-receive-samples/lib/httpasyncclient-4.1.jar!/" />
+      <root url="jar://D:/pinyougou_ziyuan/dysmsapi_demo_sdk__java/java/msg_demo/alicom-mns-receive-samples/lib/alicom-mns-receive-sdk-0.0.1-SNAPSHOT.jar!/" />
+      <root url="jar://D:/pinyougou_ziyuan/dysmsapi_demo_sdk__java/java/msg_demo/alicom-mns-receive-samples/lib/aliyun-sdk-mns-1.1.8.jar!/" />
+      <root url="jar://D:/pinyougou_ziyuan/dysmsapi_demo_sdk__java/java/msg_demo/alicom-mns-receive-samples/lib/httpcore-nio-4.4.1.jar!/" />
+      <root url="jar://D:/pinyougou_ziyuan/dysmsapi_demo_sdk__java/java/msg_demo/alicom-mns-receive-samples/lib/httpclient-4.4.1.jar!/" />
+      <root url="jar://D:/pinyougou_ziyuan/dysmsapi_demo_sdk__java/java/msg_demo/alicom-mns-receive-samples/lib/log4j-1.2.17.jar!/" />
+      <root url="jar://D:/pinyougou_ziyuan/dysmsapi_demo_sdk__java/java/msg_demo/alicom-mns-receive-samples/lib/httpcore-4.4.1.jar!/" />
+      <root url="jar://D:/pinyougou_ziyuan/dysmsapi_demo_sdk__java/java/msg_demo/alicom-mns-receive-samples/lib/aliyun-java-sdk-dybaseapi-1.0.0-SNAPSHOT.jar!/" />
+      <root url="jar://D:/pinyougou_ziyuan/dysmsapi_demo_sdk__java/java/msg_demo/alicom-mns-receive-samples/lib/aliyun-java-sdk-core-3.2.2.jar!/" />
+      <root url="jar://D:/pinyougou_ziyuan/dysmsapi_demo_sdk__java/java/msg_demo/alicom-mns-receive-samples/lib/commons-codec-1.9.jar!/" />
+      <root url="jar://D:/pinyougou_ziyuan/dysmsapi_demo_sdk__java/java/msg_demo/alicom-mns-receive-samples/lib/commons-logging-1.1.1.jar!/" />
+      <root url="jar://D:/pinyougou_ziyuan/dysmsapi_demo_sdk__java/java/msg_demo/alicom-mns-receive-samples/lib/commons-lang3-3.1.jar!/" />
+      <root url="jar://D:/pinyougou_ziyuan/dysmsapi_demo_sdk__java/java/msg_demo/alicom-mns-receive-samples/lib/gson-2.3.1.jar!/" />
+      <root url="jar://D:/pinyougou_ziyuan/dysmsapi_demo_sdk__java/java/msg_demo/alicom-mns-receive-samples/lib/alicom-mns-receive-sdk-0.0.1-SNAPSHOT-sources.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

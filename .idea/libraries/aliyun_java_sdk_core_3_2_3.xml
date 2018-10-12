@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="aliyun-java-sdk-core-3.2.3">
+    <CLASSES>
+      <root url="jar://D:/pinyougou_ziyuan/dysmsapi_demo_sdk__java/java/api_sdk/aliyun-java-sdk-core/target/aliyun-java-sdk-core-3.2.3.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
